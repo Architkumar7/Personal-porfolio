@@ -24,11 +24,6 @@ export const Header: React.FC = () => {
 };
 
 export const Footer: React.FC = () => {
-    const handleEmailClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-      e.preventDefault();
-      window.open('mailto:Archer107kr@gmail.com', '_top');
-    };
-
     return (
         <footer className="bg-black/30 border-t border-gray-800/50">
             <div className="container mx-auto px-6 py-8 flex flex-col md:flex-row justify-between items-center text-center md:text-left">
@@ -40,7 +35,7 @@ export const Footer: React.FC = () => {
                         <span className="sr-only">LinkedIn</span>
                         <LinkedInIcon className="w-6 h-6" />
                     </a>
-                    <a href="#" onClick={handleEmailClick} className="text-gray-400 hover:text-lime-400 transition-colors duration-300">
+                    <a href="mailto:Archer107kr@gmail.com" className="text-gray-400 hover:text-lime-400 transition-colors duration-300">
                         <span className="sr-only">Email</span>
                         <MailIcon className="w-6 h-6" />
                     </a>

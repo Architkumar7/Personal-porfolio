@@ -29,13 +29,39 @@ const FloatingIcon: React.FC<{ style: React.CSSProperties, children: React.React
 
 export const Hero: React.FC = () => {
   const [roleIndex, setRoleIndex] = useState(0);
+  const [text, setText] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setRoleIndex((prevIndex) => (prevIndex + 1) % roles.length);
-    }, 2500);
-    return () => clearInterval(interval);
-  }, []);
+    const fullText = roles[roleIndex];
+    let timeoutId: number;
+
+    if (isDeleting) {
+      if (text.length > 0) {
+        timeoutId = setTimeout(() => {
+          setText(text.slice(0, -1));
+        }, 60); // Deleting speed
+      } else {
+        // Finished deleting
+        setIsDeleting(false);
+        setRoleIndex((prev) => (prev + 1) % roles.length);
+      }
+    } else { // is not deleting
+      if (text.length < fullText.length) {
+        timeoutId = setTimeout(() => {
+          setText(fullText.slice(0, text.length + 1));
+        }, 120); // Typing speed
+      } else {
+        // Finished typing, pause and then start deleting
+        timeoutId = setTimeout(() => {
+          setIsDeleting(true);
+        }, 2000); // Pause duration
+      }
+    }
+
+    return () => clearTimeout(timeoutId);
+  }, [text, roleIndex, isDeleting]);
+
 
   const handleScrollToContact = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
@@ -67,13 +93,7 @@ export const Hero: React.FC = () => {
                 Archit Kumar
             </h1>
             <div className="text-2xl md:text-4xl text-lime-400 font-medium h-12 text-glow">
-                 <div className="relative inline-block w-80">
-                    {roles.map((role, index) => (
-                        <span key={role} className={`transition-all duration-500 absolute w-full left-1/2 -translate-x-1/2 whitespace-nowrap ${index === roleIndex ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
-                            {role}
-                        </span>
-                    ))}
-                </div>
+                <span className="typing-cursor whitespace-nowrap">{text}</span>
             </div>
             <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto mt-6">
                 A CA Aspirant who has cleared CA foundation on the first attempt and is awaiting CA intermediate results. I have a keen interest in technology and aim to get experience in various fields related to Audit and Finance.
@@ -113,7 +133,7 @@ export const About: React.FC = () => {
         </div>
         <div className="md:w-2/3 text-center md:text-left">
           <p className="text-lg text-gray-300 mb-6 leading-relaxed">
-            As a dedicated CA Aspirant, I have successfully cleared both the CA Foundation and CA Intermediate Group 1 on my first attempt, and am currently awaiting my Group 2 results. My passion for technology and AI complements my financial expertise, providing me with a diverse skillset that bridges both fields. I am eager to leverage these combined skills to gain rich, diverse, and holistic experience in audit and finance during my CA articleship.
+            Hey there! I’m a CA aspirant who loves exploring the deep worlds of finance and technology. I cleared my CA Foundation and Intermediate Group 1 on my first attempt and am now awaiting my Group 2 results. Numbers keep me grounded, but my curiosity for AI and tech keeps me moving forward. I’m excited to bring the best of both worlds together as I begin my CA articleship — learning, experimenting, and growing along the way.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8">
             {aboutSkills.map((skill) => (
@@ -169,9 +189,10 @@ export const Education: React.FC = () => {
 // --- SKILLS & INTERESTS SECTION ---
 const skillsAndInterests: ProjectItem[] = [
   { title: 'Key Achievements', description: 'Recognized for academic and extracurricular excellence in competitive events.', skills: ['Commerce Olympiad (ICAI) - AIR 6', 'Commerce Olympiad (SRCC) - 99 percentile'] },
-  { title: 'Technical & Other Interests', description: 'Exploring various domains from technology and finance to creative fields.', skills: ['AI', 'Stock Market', 'MS Office', 'Photography', 'Copywriting', 'Marketing', 'Chess'] },
+  { title: 'Technical Skills', description: 'Exploring modern technologies and software relevant to finance and business efficiency.', skills: ['MS Excel', 'AI', 'IDEA', 'MS Access', 'MS Powerpoint', 'MS Word', 'Oracle', 'Tally', 'Zoho'] },
   { title: 'Certifications', description: 'Completed courses to enhance technical and practical skills relevant to the finance industry.', skills: ['MS Excel', 'Replit Agent'] },
-  { title: 'Co-curricular', description: 'Engaged in creative, athletic, and literary hobbies like debate and writing, alongside interests in guitar, dance, and sports.', skills: ['Guitar', 'Dance', 'Sports (Cricket)', 'Chess', 'Debate', 'Writing'] },
+  { title: 'Co-curricular', description: 'Engaged in creative, athletic, and literary hobbies like debate and writing, alongside interests in guitar, dance, and sports.', skills: ['Guitar', 'Dance', 'Sports (Cricket)', 'Debate', 'Writing'] },
+  { title: 'Other Interests', description: 'Pursuing a range of creative and analytical hobbies outside of core finance.', skills: ['Stock Market', 'Photography', 'Copywriting', 'Marketing'] },
 ];
 export const Skills: React.FC = () => {
   return (
@@ -181,28 +202,53 @@ export const Skills: React.FC = () => {
         <div className="w-24 h-1 bg-lime-400 mx-auto mt-4 rounded-full"></div>
       </div>
       <div className="grid md:grid-cols-2 gap-8">
-        {skillsAndInterests.map((project, index) => (
-          <div key={index} className="bg-zinc-900 border border-zinc-800 rounded-lg shadow-xl p-6 flex flex-col group hover:-translate-y-2 transition-transform duration-300 hover:border-lime-500/50 hover:shadow-lime-500/10">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-bold text-gray-100 group-hover:text-lime-400 transition-colors">{project.title}</h3>
-              {project.link && (
-                <a href={project.link} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-lime-400 transition-colors">
-                  <GithubIcon className="w-6 h-6" />
-                </a>
-              )}
+        {skillsAndInterests.map((project, index) => {
+          const isLastItem = index === skillsAndInterests.length - 1;
+          const isOddNumberOfItems = skillsAndInterests.length % 2 !== 0;
+
+          // Card content is extracted to avoid repetition
+          const cardContent = (
+            <>
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-bold text-gray-100 group-hover:text-lime-400 transition-colors">{project.title}</h3>
+                {project.link && (
+                  <a href={project.link} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-lime-400 transition-colors">
+                    <GithubIcon className="w-6 h-6" />
+                  </a>
+                )}
+              </div>
+              <p className="text-gray-300 flex-grow mb-4">{project.description}</p>
+              <div className="flex flex-wrap gap-2">
+                {project.skills.map(skill => (
+                  <span key={skill} className="bg-lime-900/70 text-lime-300 text-xs font-semibold px-2.5 py-1 rounded-full">{skill}</span>
+                ))}
+              </div>
+            </>
+          );
+          
+          if (isLastItem && isOddNumberOfItems) {
+            // This wrapper will span the full width of the grid and center the card within it.
+            return (
+              <div key={index} className="md:col-span-2 flex justify-center">
+                <div className="w-full md:w-[calc(50%-1rem)] bg-zinc-900 border border-zinc-800 rounded-lg shadow-xl p-6 flex flex-col group hover:-translate-y-2 transition-transform duration-300 hover:border-lime-500/50 hover:shadow-lime-500/10">
+                  {cardContent}
+                </div>
+              </div>
+            );
+          }
+
+          // Render a normal card
+          return (
+            <div key={index} className="bg-zinc-900 border border-zinc-800 rounded-lg shadow-xl p-6 flex flex-col group hover:-translate-y-2 transition-transform duration-300 hover:border-lime-500/50 hover:shadow-lime-500/10">
+              {cardContent}
             </div>
-            <p className="text-gray-300 flex-grow mb-4">{project.description}</p>
-            <div className="flex flex-wrap gap-2">
-              {project.skills.map(skill => (
-                <span key={skill} className="bg-lime-900/70 text-lime-300 text-xs font-semibold px-2.5 py-1 rounded-full">{skill}</span>
-              ))}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </AnimatedSection>
   );
 };
+
 
 // --- IMPACTFUL EXPERIENCES SECTION ---
 const impactfulExperiences = [
@@ -240,11 +286,6 @@ export const ImpactfulExperiences: React.FC = () => {
 
 // --- CONTACT SECTION ---
 export const Contact: React.FC = () => {
-  const handleEmailClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    window.open('mailto:Archer107kr@gmail.com', '_top');
-  };
-
   return (
     <AnimatedSection id="contact" className="bg-zinc-900/70">
       <div className="text-center max-w-2xl mx-auto">
@@ -254,7 +295,7 @@ export const Contact: React.FC = () => {
           I'm actively seeking Articleship opportunities and am open to collaborations in the fin-tech space. Whether you have a question or just want to connect, feel free to reach out.
         </p>
         <div className="flex flex-col sm:flex-row justify-center items-center gap-6">
-          <a href="#" onClick={handleEmailClick} className="w-full sm:w-auto flex items-center justify-center gap-3 bg-zinc-800 py-3 px-6 rounded-lg hover:bg-lime-400 hover:text-black transition-all duration-300 group border border-zinc-700 hover:border-lime-400">
+          <a href="mailto:Archer107kr@gmail.com" className="w-full sm:w-auto flex items-center justify-center gap-3 bg-zinc-800 py-3 px-6 rounded-lg hover:bg-lime-400 hover:text-black transition-all duration-300 group border border-zinc-700 hover:border-lime-400">
             <MailIcon className="w-6 h-6 text-lime-400 group-hover:text-black transition-colors"/>
             <span className="font-semibold">Email Me</span>
           </a>
