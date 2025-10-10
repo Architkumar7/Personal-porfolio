@@ -152,8 +152,13 @@ export const About: React.FC = () => {
 
 
 // --- EDUCATION SECTION ---
+<<<<<<< HEAD
 onst experiences: ExperienceItem[] = [
   { role: 'ICAI (Institute of Chartered Accountants of India)', company: 'Chartered Accountancy', period: '2024 - Present', description: ['Cleared CA Foundation in June 2024 in the first attempt.', 'Wrote CA intermediate in May 2025 cleared group 1 and awaiting result for group 2.', 'Successfully completed OC & ITT training. '] },
+=======
+const experiences: ExperienceItem[] = [
+  { role: 'ICAI (Institute of Chartered Accountants of India)', company: 'Chartered Accountancy', period: '2024 - Present', description: ['Cleared CA Foundation in June 2024 in the first attempt.', 'Wrote CA intermediate in May 2025 cleared group 1 and awaiting result for group 2.', 'Successfully completed OC & ITT training.'] },
+>>>>>>> 8ac5184 (package)
   { role: 'Christ (Deemed to be University)', company: 'BCOM (Finance & Accountancy)', period: '2024 - Present', description: ['Average of 3.62 CGPA in the two semesters.', 'Interacted with the honorable finance minister Nirmala Sitaraman to discuss New-Gen GST Reforms that was broadcasted on National Television.', 'Won 3rd place in a communication and negotiation fest.', 'Finalized in the Top 30 of a chess tournament featuring over 400 participants.'] },
   { role: 'Christ Academy Junior College', company: 'ISC (English, Commerce, economics and Math)', period: '2022 - 2024', description: ['Secured a 93.5% in 12th std ISC exams.', 'Represented the School in numerous interschool debating competitions.', 'Was a copywriter in a marketing agency as a side hustle for real-world market experience.', 'Secured top 3 in a photography competition.'] },
   { role: 'Mitra Academy', company: 'ICSE', period: '2012 - 2022', description: ['Secured a 95% in 10th std ICSE.', 'Was amongst top 4 best chess players in school team.'] }
