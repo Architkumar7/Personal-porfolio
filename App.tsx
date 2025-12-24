@@ -1,6 +1,6 @@
 import React from 'react';
 import { Header, Footer } from './components/Layout';
-import { Hero, About, Education, Skills, ImpactfulExperiences, Contact } from './components/Sections';
+import { Hero, About, Education, Skills, BusinessOverview, ImpactfulExperiences, Contact } from './components/Sections';
 
 function App() {
   return (
@@ -11,6 +11,7 @@ function App() {
         <About />
         <Education />
         <Skills />
+        <BusinessOverview />
         <ImpactfulExperiences />
         <Contact />
       </main>
